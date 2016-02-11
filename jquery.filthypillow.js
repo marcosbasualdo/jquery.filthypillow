@@ -285,11 +285,14 @@
 
     onKeyDown: function( e ) {
       var keyCode = e.keyCode || e.which;
+			console.log(keyCode);
       switch( keyCode ) {
         case 38: this.moveUp( ); break; //up
         case 40: this.moveDown( ); break; //down
         case 37: this.moveLeft( ); break; //left
         case 39: this.moveRight( ); break; //right
+				case 65: this.changeMeridiem('a'); break;
+				case 80: this.changeMeridiem('p'); break;
       }
       if( e.shiftKey && keyCode === 9 ) //shift + tab
         this.moveLeft( );
@@ -305,9 +308,7 @@
 
     moveDown: function( ) {
       if( this.currentStep === "meridiem" ) {
-        //We do this so the day does not change
-        var offset = this.dateTime.format( "H" ) < 12 ? 12 : -12;
-        this.changeDateTimeUnit( "hour", offset );
+				this.changeMeridiem();
       }
       else if( this.currentStep === "minute" )
         this.changeDateTimeUnit( this.currentStep, parseInt(this.options.minuteStepSize) * -1 );
@@ -319,9 +320,7 @@
 
     moveUp: function( ) {
       if( this.currentStep === "meridiem" ) {
-        var offset = parseInt( this.dateTime.format( "H" ), 10 ) < 12 ? 12 : -12;
-
-        this.changeDateTimeUnit( "hour", offset );
+        this.changeMeridiem();
       }
       else if( this.currentStep === "minute" )
         this.changeDateTimeUnit( this.currentStep, parseInt(this.options.minuteStepSize) );
@@ -330,6 +329,23 @@
 
       this.currentDigit = 0;
     },
+
+		changeMeridiem: function(ampm){
+			var offset = parseInt( this.dateTime.format( "H" ), 10 ) < 12 ? 12 : -12;
+
+			if(ampm){
+				switch(ampm.toLowerCase()){
+					case 'a':
+						offset = offset < 0 ? offset : 0;
+						break;
+					case 'p':
+						offset = offset > 0 ? offset : 0;
+						break;
+				}
+			}
+
+			this.changeDateTimeUnit( "hour", offset );
+		},
 
     moveLeft: function( ) {
       if( !this.currentStep ) return;
