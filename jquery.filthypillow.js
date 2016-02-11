@@ -3,13 +3,13 @@
  * by aef
  */
 ( function( factory ) {
-	if ( typeof define === 'function' && define.amd ) {
-		define( [ 'jquery' ], factory );
-	} else if ( typeof exports === 'object' ) {
-		module.exports = factory;
-	} else {
-		factory( jQuery );
-	}
+  if ( typeof define === 'function' && define.amd ) {
+    define( [ 'jquery' ], factory );
+  } else if ( typeof exports === 'object' ) {
+    module.exports = factory;
+  } else {
+    factory( jQuery );
+  }
 } ( function( $ ) {
   var pluginName = "filthypillow",
       name = "plugin_" + pluginName,
@@ -20,11 +20,11 @@
         initialDateTime: null, //function returns moment obj
         enableCalendar: true,
         steps: [ "month", "day", "hour", "minute", "meridiem" ],
-				exitOnBackgroundClick: true,
+        exitOnBackgroundClick: true,
         enable24HourTime: false,
         minuteStepSize: 15,
         calendar: {
-					isPinned: false,
+          isPinned: false,
           saveOnDateSelect: false
         }
       },
@@ -32,7 +32,7 @@
       returnableMethods = [ "getDate", "isValid" ];
 
   function FilthyPillow( $element, options ) {
-		var calendarOptions = $.extend( {}, defaults.calendar, options.calendar || {} );
+    var calendarOptions = $.extend( {}, defaults.calendar, options.calendar || {} );
 
 
     if( options.enable24HourTime && !options.steps ) //remove meridiem
@@ -40,7 +40,7 @@
 
     this.options = $.extend( {}, defaults, options );
 
-		this.options.calendar = calendarOptions;
+    this.options.calendar = calendarOptions;
 
     this.$element = $element;
     this.setup( );
@@ -59,11 +59,11 @@
                 '<div class="fp-description"></div>' +
                 '<div class="fp-errors"></div>' +
                 '<div class="fp-calendar-calendar"></div>' +
-								'<div class="fp-current"></div>' +
-								'<div class="fp-arrows">' +
-									'<span class="fp-arrow-up">&#9652;</span>' +
-									'<span class="fp-arrow-down">&#9662;</span>' +
-								'</div>' +
+                '<div class="fp-current"></div>' +
+                '<div class="fp-arrows">' +
+                  '<span class="fp-arrow-up">&#9652;</span>' +
+                  '<span class="fp-arrow-down">&#9662;</span>' +
+                '</div>' +
               '</div>',
     currentStep: null,
     dateTime: null,
@@ -100,10 +100,10 @@
       this.$saveButton = this.$container.find( ".fp-save-button" );
       this.$descriptionBox = this.$container.find( ".fp-description" );
 
-			this.$currentContainer = this.$container.find( ".fp-current" );
-			this.$arrowsContainer = this.$container.find( ".fp-arrows" );
-			this.$arrowUp = this.$container.find( ".fp-arrow-up" );
-			this.$arrowDown = this.$container.find( ".fp-arrow-down" );
+      this.$currentContainer = this.$container.find( ".fp-current" );
+      this.$arrowsContainer = this.$container.find( ".fp-arrows" );
+      this.$arrowUp = this.$container.find( ".fp-arrow-up" );
+      this.$arrowDown = this.$container.find( ".fp-arrow-down" );
 
 
       if( this.options.enable24HourTime )
@@ -143,7 +143,7 @@
 
       //Highlight element
 
-			this.$container.find( ".active" ).unwrap( this.$currentContainer );
+      this.$container.find( ".active" ).unwrap( this.$currentContainer );
       this.$container.find( ".active" ).removeClass( "active" );
 
       $element.addClass( "active" );
@@ -158,8 +158,8 @@
           this.calendar.hide( );
       }
 
-			$element.wrap( this.$currentContainer );
-			$element.after( this.$arrowsContainer );
+      $element.wrap( this.$currentContainer );
+      $element.after( this.$arrowsContainer );
     },
 
     to12Hour: function( value ) {
@@ -236,7 +236,7 @@
       else
         fakeValue = this.formatToMoment( step, fakeValue );
 
-			if( !this.isValidDigitInput( fakeValue ) ) {
+      if( !this.isValidDigitInput( fakeValue ) ) {
         if( this.currentDigit === 2 )
           this.currentDigit = 1;
         return;
@@ -290,6 +290,8 @@
         case 40: this.moveDown( ); break; //down
         case 37: this.moveLeft( ); break; //left
         case 39: this.moveRight( ); break; //right
+        case 65: this.changeMeridiem('a'); break;
+        case 80: this.changeMeridiem('p'); break;
       }
       if( e.shiftKey && keyCode === 9 ) //shift + tab
         this.moveLeft( );
@@ -305,9 +307,7 @@
 
     moveDown: function( ) {
       if( this.currentStep === "meridiem" ) {
-        //We do this so the day does not change
-        var offset = this.dateTime.format( "H" ) < 12 ? 12 : -12;
-        this.changeDateTimeUnit( "hour", offset );
+        this.changeMeridiem();
       }
       else if( this.currentStep === "minute" )
         this.changeDateTimeUnit( this.currentStep, parseInt(this.options.minuteStepSize) * -1 );
@@ -319,9 +319,7 @@
 
     moveUp: function( ) {
       if( this.currentStep === "meridiem" ) {
-        var offset = parseInt( this.dateTime.format( "H" ), 10 ) < 12 ? 12 : -12;
-
-        this.changeDateTimeUnit( "hour", offset );
+        this.changeMeridiem();
       }
       else if( this.currentStep === "minute" )
         this.changeDateTimeUnit( this.currentStep, parseInt(this.options.minuteStepSize) );
@@ -329,6 +327,23 @@
         this.changeDateTimeUnit( this.currentStep, 1 );
 
       this.currentDigit = 0;
+    },
+
+    changeMeridiem: function(ampm){
+      var offset = parseInt( this.dateTime.format( "H" ), 10 ) < 12 ? 12 : -12;
+
+      if(ampm){
+        switch(ampm.toLowerCase()){
+          case 'a':
+            offset = offset < 0 ? offset : 0;
+            break;
+          case 'p':
+            offset = offset > 0 ? offset : 0;
+            break;
+        }
+      }
+
+      this.changeDateTimeUnit( "hour", offset );
     },
 
     moveLeft: function( ) {
@@ -371,11 +386,11 @@
       this.$document.on( "keydown." + this.id, $.proxy( this.onKeyDown, this ) );
       this.$document.on( "keyup." + this.id, $.proxy( this.onKeyUp, this ) );
 
-			this.$arrowDown.on( "click", $.proxy( this.moveDown, this ) );
-			this.$arrowUp.on( "click", $.proxy( this.moveUp, this ) );
+      this.$arrowDown.on( "click", $.proxy( this.moveDown, this ) );
+      this.$arrowUp.on( "click", $.proxy( this.moveUp, this ) );
 
-			if( this.options.exitOnBackgroundClick )
-				this.$window.on( "click." + this.id, $.proxy( this.onClickToExit, this ) );
+      if( this.options.exitOnBackgroundClick )
+        this.$window.on( "click." + this.id, $.proxy( this.onClickToExit, this ) );
     },
 
     removeEvents: function( ) {
@@ -481,9 +496,9 @@
     getDate: function( ) {
       return this.dateTime.clone( );
     },
-		isValid: function( ) {
-			return !this.isError;
-		},
+    isValid: function( ) {
+      return !this.isError;
+    },
     updateDateTime: function( dateObj, moveNext ) {
       this.setDateTime( dateObj, moveNext );
       this.renderDateTime( );
