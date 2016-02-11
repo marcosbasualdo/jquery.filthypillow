@@ -59,6 +59,11 @@
                 '<div class="fp-description"></div>' +
                 '<div class="fp-errors"></div>' +
                 '<div class="fp-calendar-calendar"></div>' +
+								'<div class="fp-current"></div>' +
+								'<div class="fp-arrows">' +
+									'<span class="fp-arrow-up">&#9652;</span>' +
+									'<span class="fp-arrow-down">&#9662;</span>' +
+								'</div>' +
               '</div>',
     currentStep: null,
     dateTime: null,
@@ -94,6 +99,11 @@
       this.$errorBox = this.$container.find( ".fp-errors" );
       this.$saveButton = this.$container.find( ".fp-save-button" );
       this.$descriptionBox = this.$container.find( ".fp-description" );
+
+			this.$currentContainer = this.$container.find( ".fp-current" );
+			this.$arrowsContainer = this.$container.find( ".fp-arrows" );
+			this.$arrowUp = this.$container.find( ".fp-arrow-up" );
+			this.$arrowDown = this.$container.find( ".fp-arrow-down" );
 
 
       if( this.options.enable24HourTime )
@@ -132,7 +142,10 @@
       this.currentStep = step;
 
       //Highlight element
+
+			this.$container.find( ".active" ).unwrap( this.$currentContainer );
       this.$container.find( ".active" ).removeClass( "active" );
+
       $element.addClass( "active" );
 
       //Reset digit
@@ -144,6 +157,9 @@
         else if( !this.options.calendar.isPinned )
           this.calendar.hide( );
       }
+
+			$element.wrap( this.$currentContainer );
+			$element.after( this.$arrowsContainer );
     },
 
     to12Hour: function( value ) {
@@ -354,6 +370,10 @@
 
       this.$document.on( "keydown." + this.id, $.proxy( this.onKeyDown, this ) );
       this.$document.on( "keyup." + this.id, $.proxy( this.onKeyUp, this ) );
+
+			this.$arrowDown.on( "click", $.proxy( this.moveDown, this ) );
+			this.$arrowUp.on( "click", $.proxy( this.moveUp, this ) );
+
 			if( this.options.exitOnBackgroundClick )
 				this.$window.on( "click." + this.id, $.proxy( this.onClickToExit, this ) );
     },
