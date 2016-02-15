@@ -290,8 +290,8 @@
         case 40: this.moveDown( ); break; //down
         case 37: this.moveLeft( ); break; //left
         case 39: this.moveRight( ); break; //right
-		case 65: this.changeMeridiem('a'); break;
-		case 80: this.changeMeridiem('p'); break;
+        case 65: if( this.currentStep === "meridiem" ) { this.changeMeridiem('a'); } break;
+        case 80: if( this.currentStep === "meridiem" ) { this.changeMeridiem('p'); } break;
       }
       if( e.shiftKey && keyCode === 9 ) //shift + tab
         this.moveLeft( );
@@ -307,7 +307,7 @@
 
     moveDown: function( ) {
       if( this.currentStep === "meridiem" ) {
-		this.changeMeridiem();
+        this.changeMeridiem();
       }
       else if( this.currentStep === "minute" )
         this.changeDateTimeUnit( this.currentStep, parseInt(this.options.minuteStepSize) * -1 );
