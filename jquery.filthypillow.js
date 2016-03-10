@@ -390,8 +390,10 @@
       this.$arrowDown.on( "click", $.proxy( this.moveDown, this ) );
       this.$arrowUp.on( "click", $.proxy( this.moveUp, this ) );
 
+      this.$document.on( "scroll", $.proxy( this.hide, this ) );
+
       if( this.options.exitOnBackgroundClick )
-        this.$window.on( "click." + this.id, $.proxy( this.onClickToExit, this ) );
+        this.$window.on( "click" , $.proxy( this.onClickToExit, this ) );
     },
 
     removeEvents: function( ) {
@@ -402,6 +404,8 @@
 
       this.$document.off( "keydown." + this.id );
       this.$document.off( "keyup." + this.id );
+
+      this.$document.off( "scroll" );
     },
     setDateTime: function( dateObj, moveNext ) {
       this.dateTime = moment( dateObj );
@@ -506,23 +510,73 @@
       this.renderDateTime( );
       this.dateChange( );
     },
+    checkPositionInterval: null,
+    clearCheckPositionInterval: function(){
+      if(this.checkPositionInterval != null){
+        clearInterval(this.checkPositionInterval);
+      }
+      this.checkPositionInterval = null;
+    },
+    currentPosition: {
+      top: null,
+      left: null
+    },
+    positionElement: function(){
+      var top = this.currentPosition.top;
+      if(this.$window.scrollTop() + this.$window.height() < this.currentPosition.top + this.$container.height()){
+        top = this.currentPosition.top - this.$container.height() - this.$element.height();
+      }
+
+      this.$container.css({
+        left: this.currentPosition.left+'px',
+        top: top+'px'
+      });
+    },
+    getElementPosition: function(){
+      var offset = this.$element.offset();
+      return {
+        top: offset.top + this.$element.height(),
+        left: offset.left
+      }
+    },
     show: function( ) {
       if( !this.isActive ) {
         this.setInitialDateTime( );
-        this.$container.insertAfter( this.$element );
+
+          this.clearCheckPositionInterval();
+
+          $('body').prepend(this.$container);
+          this.$container.hide();
+
+          setInterval(function(){
+            var pos = this.getElementPosition();
+            this.$container.show();
+            if(pos.top != this.currentPosition.top || pos.left != this.currentPosition.left){
+              this.currentPosition = pos;
+              this.positionElement();
+            }
+          }.bind(this),100);
+
+
+
         this.activateSelectorTool( this.options.startStep );
         this.addEvents( );
         this.isActive = true;
       }
     },
     hide: function( ) {
+      this.clearCheckPositionInterval();
+      this.currentPosition.left = this.currentPosition.top = null;
       if( this.isActive ) {
         this.$container.remove( );
         this.removeEvents( );
         this.isActive = false;
+        this.$element.trigger( "fp:hide", [ this.dateTime ] );
       }
     },
     destroy: function( ) {
+      this.clearCheckPositionInterval();
+      this.currentPosition.left = this.currentPosition.top = null;
       this.removeEvents( );
       this.$container.remove( );
       this.isActive = false;
