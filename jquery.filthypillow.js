@@ -19,7 +19,7 @@
         maxDateTime: null, //function returns moment obj
         initialDateTime: null, //function returns moment obj
         enableCalendar: true,
-        steps: [ "month", "day", "hour", "minute", "meridiem" ],
+        steps: [ "month", "day", "year", "hour", "minute", "meridiem" ],
         exitOnBackgroundClick: true,
         enable24HourTime: false,
         minuteStepSize: 15,
@@ -49,7 +49,7 @@
   FilthyPillow.prototype = {
     template: '<div class="fp-container">' +
                 '<div class="fp-calendar">' +
-                  '<span class="fp-month fp-option"></span>/<span class="fp-day fp-option"></span>' +
+                  '<span class="fp-month fp-option"></span>/<span class="fp-day fp-option"></span>/<span class="fp-year fp-option"></span>' +
                 '</div>' +
                 '<div class="fp-clock">' +
                   '<span class="fp-hour fp-option"></span>:<span class="fp-minute fp-option"></span>' +
@@ -90,6 +90,7 @@
 
       this.$month = this.$calendar.find( ".fp-month" );
       this.$day = this.$calendar.find( ".fp-day" );
+      this.$year = this.$calendar.find( ".fp-year" );
 
       this.$clock = this.$container.find( ".fp-clock" );
       this.$hour = this.$clock.find( ".fp-hour" );
@@ -152,7 +153,7 @@
       this.currentDigit = 0;
       this.isActiveLeadingZero = 0;
       if( this.options.enableCalendar ) {
-        if( step === "day" || step === "month" )
+        if( step === "day" || step === "month" || step === "year")
           this.calendar.show( );
         else if( !this.options.calendar.isPinned )
           this.calendar.hide( );
@@ -216,7 +217,7 @@
         return;
       }
 
-      if( digit === 2 && !this.isActiveLeadingZero ) {
+      if( digit > 1 && !this.isActiveLeadingZero ) {
         precedingDigit = this.dateTime.get( step );
         if( step === "hour" )
           precedingDigit = this.to12Hour( precedingDigit )
@@ -237,12 +238,12 @@
         fakeValue = this.formatToMoment( step, fakeValue );
 
       if( !this.isValidDigitInput( fakeValue ) ) {
-        if( this.currentDigit === 2 )
+        if( this.currentDigit === (this.currentStep == "year" ? 4 : 2) )
           this.currentDigit = 1;
         return;
       }
 
-      if( this.currentDigit === 2 )
+      if( this.currentDigit === (this.currentStep == "year" ? 4 : 2) )
         moveNext = true;
       else if( step === "month" && value > 1 )
         moveNext = true;
@@ -279,7 +280,7 @@
         this.updateDigit( this.currentStep, this.currentDigit, keyCode % 48 );
       }
 
-      if( this.currentDigit === 2 )
+      if( this.currentDigit === (this.currentStep == "year" ? 4 : 2) )
         this.currentDigit = 0;
     },
 
@@ -417,6 +418,7 @@
         this.moveRight( );
     },
     renderDateTime: function( ) {
+      this.$year.text( this.dateTime.format( "YYYY" ) )
       this.$month.text( this.dateTime.format( "MM" ) );
       this.$day.text( this.dateTime.format( "DD" ) );
       this.$hour.text( this.dateTime.format( !this.options.enable24HourTime ? "hh" : "HH" )  );
@@ -468,7 +470,7 @@
     dateChange: function( ) {
       if( this.options.enableCalendar ) {
         this.calendar.setDate( this.dateTime );
-        if( this.currentStep === "day" || this.currentStep === "month" )
+        if( this.currentStep === "day" || this.currentStep === "month" || this.currentStep === "year" )
           this.calendar.render( );
       }
       this.$element.trigger("fp:datetimechange", [ this.dateTime ]);
@@ -602,6 +604,18 @@
 
   Calendar.prototype.prevMonth = function( ) {
     this.date.subtract( 1, 'month' );
+    this.selectDate( this.date.get( "year" ), this.date.get( "month" ), this.date.get( "date" ) );
+    this.render( );
+  };
+
+    Calendar.prototype.nextYear = function( ) {
+    this.date.add( 1, 'year' );
+    this.selectDate( this.date.get( "year" ), this.date.get( "month" ), this.date.get( "date" ) );
+    this.render( );
+  };
+
+  Calendar.prototype.prevYear = function( ) {
+    this.date.subtract( 1, 'year' );
     this.selectDate( this.date.get( "year" ), this.date.get( "month" ), this.date.get( "date" ) );
     this.render( );
   };
