@@ -127,7 +127,9 @@
       this.setInitialDateTime( );
     },
     showError: function( step, errorMessage ) {
-      this[ "$" + step ].addClass( "fp-error fp-out-of-range" );
+      if(step && this[ "$" + step ]){
+        this[ "$" + step ].addClass( "fp-error fp-out-of-range" );
+      }
       this.$errorBox.text( errorMessage ).show( );
       this.$saveButton.attr( "disabled", "disabled" );
       this.isError = true;
