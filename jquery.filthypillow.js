@@ -549,6 +549,7 @@
           this.$container.hide();
 
           setInterval(function(){
+            if(!$(this.$element).is(':visible')) return this.hide();
             var pos = this.getElementPosition();
             this.$container.show();
             if(pos.top != this.currentPosition.top || pos.left != this.currentPosition.left){
