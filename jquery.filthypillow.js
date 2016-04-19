@@ -48,14 +48,19 @@
 
   FilthyPillow.prototype = {
     template: '<div class="fp-container">' +
-                '<div class="fp-calendar">' +
-                  '<span class="fp-month fp-option"></span>/<span class="fp-day fp-option"></span>/<span class="fp-year fp-option"></span>' +
+                '<div>' +
+                  '<div class="fp-calendar">' +
+                    '<span class="fp-month fp-option"></span>/<span class="fp-day fp-option"></span>/<span class="fp-year fp-option"></span>' +
+                  '</div>' +
+                  '<div class="fp-clock">' +
+                    '<span class="fp-hour fp-option"></span>:<span class="fp-minute fp-option"></span>' +
+                    '<span class="fp-meridiem fp-option"></span>' +
+                  '</div>' +
                 '</div>' +
-                '<div class="fp-clock">' +
-                  '<span class="fp-hour fp-option"></span>:<span class="fp-minute fp-option"></span>' +
-                  '<span class="fp-meridiem fp-option"></span>' +
+                '<div>' +
+                  '<div class="fp-now"><button class="btn btn-block btn-default fp-now-button" type="button">Now</button></div>' +
+                  '<div class="fp-save"><button class="btn btn-block btn-primary fp-save-button" type="button">Save</button></div>' +
                 '</div>' +
-                '<div class="fp-save"><button class="btn btn-primary fp-save-button" type="button">Save</button></div>' +
                 '<div class="fp-description"></div>' +
                 '<div class="fp-errors"></div>' +
                 '<div class="fp-calendar-calendar"></div>' +
@@ -99,6 +104,7 @@
 
       this.$errorBox = this.$container.find( ".fp-errors" );
       this.$saveButton = this.$container.find( ".fp-save-button" );
+      this.$nowButton = this.$container.find( ".fp-now-button" );
       this.$descriptionBox = this.$container.find( ".fp-description" );
 
       this.$currentContainer = this.$container.find( ".fp-current" );
@@ -382,9 +388,17 @@
         this.$element.trigger( "fp:save", [ this.dateTime ] );
     },
 
+    onNow: function( ) {
+      this.dateTime = moment();
+      this.renderDateTime( );
+      this.dateChange( );
+    },
+
     addEvents: function( ) {
       this.$options.on( "click", $.proxy( this.onOptionClick, this ) );
       this.$saveButton.on( "click", $.proxy( this.onSave, this ) );
+
+      this.$nowButton.on( "click", $.proxy( this.onNow, this ) );
 
       this.$document.on( "keydown." + this.id, $.proxy( this.onKeyDown, this ) );
       this.$document.on( "keyup." + this.id, $.proxy( this.onKeyUp, this ) );

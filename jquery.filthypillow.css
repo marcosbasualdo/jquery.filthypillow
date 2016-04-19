@@ -40,15 +40,21 @@
   cursor: pointer;
 }
 
+.fp-now {
+  width: 30%;
+  float: left;
+  margin: 4px 10px;
+}
+
 .fp-save {
-  text-transform: uppercase;
+  width: 60%;
   float: right;
-  margin: 4px 4px 0 0;
+  margin: 4px 10px 0 0;
   display: inline;
 }
 
 .fp-clock, .fp-calendar {
-  width: 35%;
+  width: 45%;
   padding: 8px 0;
   margin: 6px 5px 5px 5px;
   border-radius: 4px;
@@ -59,6 +65,8 @@
 
 .fp-calendar {
   text-align: left;
+  text-align: left;
+  margin-left: 0;
 }
 
 .fp-clock {
