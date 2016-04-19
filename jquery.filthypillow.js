@@ -57,7 +57,7 @@
                     '<span class="fp-meridiem fp-option"></span>' +
                   '</div>' +
                 '</div>' +
-                '<div>' +
+                '<div class="clearfix">' +
                   '<div class="fp-now"><button class="btn btn-block btn-default fp-now-button" type="button">Now</button></div>' +
                   '<div class="fp-save"><button class="btn btn-block btn-primary fp-save-button" type="button">Save</button></div>' +
                 '</div>' +
