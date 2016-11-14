@@ -543,8 +543,13 @@
         top = this.currentPosition.top - this.$container.height() - this.$element.height();
       }
 
+      var left = this.currentPosition.left;
+      if(this.$window.scrollLeft() + this.$window.width() < this.currentPosition.left + this.$container.width()){
+        left = this.$window.width() - this.$container.width();
+      }
+
       this.$container.css({
-        left: this.currentPosition.left+'px',
+        left: left+'px',
         top: top+'px'
       });
     },
@@ -564,15 +569,13 @@
           $('body').prepend(this.$container);
           this.$container.hide();
 
-          setInterval(function(){
+          this.checkPositionInterval = setInterval(function(){
             if(!$(this.$element).is(':visible')) return this.hide();
             var pos = this.getElementPosition();
             this.$container.show();
-            if(pos.top != this.currentPosition.top || pos.left != this.currentPosition.left){
-              this.currentPosition = pos;
-              this.positionElement();
-            }
-          }.bind(this),100);
+            this.currentPosition = pos;
+            this.positionElement();
+          }.bind(this),250);
 
 
 
