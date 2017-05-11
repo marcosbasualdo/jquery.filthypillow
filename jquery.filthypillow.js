@@ -389,9 +389,9 @@
     },
 
     onNow: function( ) {
-      this.dateTime = moment();
-      this.renderDateTime( );
-      this.dateChange( );
+      this.setDateTime(new Date());
+      this.renderDateTime();
+      this.dateChange();
     },
 
     addEvents: function( ) {
