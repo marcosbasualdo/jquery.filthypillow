@@ -26,7 +26,9 @@
         calendar: {
           isPinned: false,
           saveOnDateSelect: false
-        }
+        },
+        stepsOrder: ["month", "day", "year"],
+        dateFormat: { month: "MM", day: "DD",  year: "YYYY" }
       },
       methods = [ "show", "hide", "destroy", "updateDateTime", "updateDateTimeUnit", "setTimeZone" ],
       returnableMethods = [ "getDate", "isValid" ];
@@ -50,7 +52,6 @@
     template: '<div class="fp-container">' +
                 '<div>' +
                   '<div class="fp-calendar">' +
-                    '<span class="fp-month fp-option"></span>/<span class="fp-day fp-option"></span>/<span class="fp-year fp-option"></span>' +
                   '</div>' +
                   '<div class="fp-clock">' +
                     '<span class="fp-hour fp-option"></span>:<span class="fp-minute fp-option"></span>' +
@@ -78,7 +79,7 @@
     stepRegExp: null,
     isError: false, //error is being shown
     isActive: false, //whether the calendar is active or not
-
+   
     setup: function( ) {
       this.steps = this.options.steps;
       this.stepRegExp = new RegExp( this.steps.join( "|" ) )
@@ -93,6 +94,9 @@
       this.$calendar = this.$container.find( ".fp-calendar" );
       this.$options = this.$container.find( ".fp-option" );
 
+      var dateTemplate = {  "day" : '<span class="fp-day fp-option"></span>', "month" : '<span class="fp-month fp-option"></span>', "year" : '<span class="fp-year fp-option"></span>' };
+      this.$calendar.html(dateTemplate[this.options.stepsOrder[0]] + '/' + dateTemplate[this.options.stepsOrder[1]] + '/' + dateTemplate[this.options.stepsOrder[2]]);
+      
       this.$month = this.$calendar.find( ".fp-month" );
       this.$day = this.$calendar.find( ".fp-day" );
       this.$year = this.$calendar.find( ".fp-year" );
@@ -438,9 +442,9 @@
         this.moveRight( );
     },
     renderDateTime: function( ) {
-      this.$year.text( this.dateTime.format( "YYYY" ) )
-      this.$month.text( this.dateTime.format( "MM" ) );
-      this.$day.text( this.dateTime.format( "DD" ) );
+      this.$year.text( this.dateTime.format( this.options.dateFormat.year ) );
+      this.$month.text( this.dateTime.format( this.options.dateFormat.month ) );
+      this.$day.text( this.dateTime.format( this.options.dateFormat.day ) );
       this.$hour.text( this.dateTime.format( !this.options.enable24HourTime ? "hh" : "HH" )  );
       this.$minute.text( this.dateTime.format( "mm" ) );
       if( !this.options.enable24HourTime )
