@@ -49,9 +49,11 @@
   }
 
   FilthyPillow.prototype = {
+	  dateTemplates : {  "day" : '<span class="fp-day fp-option"></span>', "month" : '<span class="fp-month fp-option"></span>', "year" : '<span class="fp-year fp-option"></span>' },
     template: '<div class="fp-container">' +
                 '<div>' +
                   '<div class="fp-calendar">' +
+                    'dateTemplate' +
                   '</div>' +
                   '<div class="fp-clock">' +
                     '<span class="fp-hour fp-option"></span>:<span class="fp-minute fp-option"></span>' +
@@ -79,7 +81,7 @@
     stepRegExp: null,
     isError: false, //error is being shown
     isActive: false, //whether the calendar is active or not
-   
+
     setup: function( ) {
       this.steps = this.options.steps;
       this.stepRegExp = new RegExp( this.steps.join( "|" ) )
@@ -87,16 +89,16 @@
       this.$document = $( document );
       this.$body = $( "body" );
       this.id = "filthypillow-" + Math.round( Math.random( ) * 1000 );
-
+      
+      dateTemplate =  this.dateTemplates[this.options.stepsOrder[0]] + '/' + this.dateTemplates[this.options.stepsOrder[1]] + '/' + this.dateTemplates[this.options.stepsOrder[2]];
+	    this.template = this.template.replace('dateTemplate', dateTemplate);
       this.$container = $( this.template );
       this.$container.attr( "id", this.id );
 
       this.$calendar = this.$container.find( ".fp-calendar" );
       this.$options = this.$container.find( ".fp-option" );
-
-      var dateTemplate = {  "day" : '<span class="fp-day fp-option"></span>', "month" : '<span class="fp-month fp-option"></span>', "year" : '<span class="fp-year fp-option"></span>' };
-      this.$calendar.html(dateTemplate[this.options.stepsOrder[0]] + '/' + dateTemplate[this.options.stepsOrder[1]] + '/' + dateTemplate[this.options.stepsOrder[2]]);
-      
+	 
+	  
       this.$month = this.$calendar.find( ".fp-month" );
       this.$day = this.$calendar.find( ".fp-day" );
       this.$year = this.$calendar.find( ".fp-year" );
